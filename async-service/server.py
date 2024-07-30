@@ -7,7 +7,23 @@ INTERVAL_SECS = 1
 
 
 async def archive(request):
-    raise NotImplementedError
+    archive_hash = request.match_info.get('archive_hash')
+    response = web.StreamResponse()
+    response.headers['Content-Disposition'] = f'attachment; filename="{archive_hash}.zip"'
+    response.headers['Content-Type'] = 'application/zip'
+
+    await response.prepare(request)
+
+    proc = await asyncio.create_subprocess_exec(
+        'zip', '-r', '-', f'{archive_hash}',
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+        cwd='test_photos'
+    )
+    while not proc.stdout.at_eof():
+        archive_data = await proc.stdout.read(100000)
+        await response.write(archive_data)
+    return response
 
 
 async def handle_index_page(request):
@@ -37,6 +53,7 @@ async def uptime_handler(request):
 
 
 if __name__ == '__main__':
+    data = b''
     app = web.Application()
     app.add_routes([
         web.get('/', handle_index_page),
