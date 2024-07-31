@@ -6,6 +6,9 @@ import os
 import logging
 
 
+THROTTLING_TICS = 0
+
+
 logging.basicConfig(
     format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
     level=logging.DEBUG,
@@ -32,10 +35,14 @@ async def archive(request):
         stderr=asyncio.subprocess.PIPE,
         cwd='test_photos'
     )
-    while not proc.stdout.at_eof():
-        archive_data = await proc.stdout.read(100000)
-        logging.info(msg=f'Sending archive chunk {archive_hash}')
-        await response.write(archive_data)
+    try:
+        while not proc.stdout.at_eof():
+            archive_data = await proc.stdout.read(100000)
+            logging.info(msg=f'Sending archive chunk {archive_hash}')
+            await asyncio.sleep(THROTTLING_TICS)
+            await response.write(archive_data)
+    finally:
+        logging.error(msg='Download was interrupted')
     return response
 
 
