@@ -2,12 +2,16 @@ from aiohttp import web
 import asyncio
 import aiofiles
 import datetime
+import os
+
 
 INTERVAL_SECS = 1
 
 
 async def archive(request):
     archive_hash = request.match_info.get('archive_hash')
+    if not os.path.exists(os.path.join('test_photos', archive_hash)):
+        raise web.HTTPNotFound(text=f'404: Архив {archive_hash} не существует или был удален')
     response = web.StreamResponse()
     response.headers['Content-Disposition'] = f'attachment; filename="{archive_hash}.zip"'
     response.headers['Content-Type'] = 'application/zip'
