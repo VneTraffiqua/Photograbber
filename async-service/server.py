@@ -3,6 +3,14 @@ import asyncio
 import aiofiles
 import datetime
 import os
+import logging
+
+
+logging.basicConfig(
+    format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
+    level=logging.DEBUG,
+    filename=u'photo_archive_log.log'
+)
 
 
 INTERVAL_SECS = 1
@@ -26,6 +34,7 @@ async def archive(request):
     )
     while not proc.stdout.at_eof():
         archive_data = await proc.stdout.read(100000)
+        logging.info(msg=f'Sending archive chunk {archive_hash}')
         await response.write(archive_data)
     return response
 
