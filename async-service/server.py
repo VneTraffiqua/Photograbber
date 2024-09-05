@@ -6,6 +6,9 @@ import logging
 import argparse
 
 
+BYTES=100000
+
+
 logging.basicConfig(
     format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
     level=logging.INFO,
@@ -33,7 +36,7 @@ async def archive(request):
     )
     try:
         while not proc.stdout.at_eof():
-            archive_data = await proc.stdout.read(100000)
+            archive_data = await proc.stdout.read(BYTES)
             logging.info(msg=f'Sending archive chunk {archive_hash}')
             await asyncio.sleep(args.sleep)
             await response.write(archive_data)
@@ -64,13 +67,7 @@ if __name__ == '__main__':
     parser.add_argument('-s', '--sleep', type=int, default=0, help='response delay')
     parser.add_argument('-p', '--path', type=str, default='test_photos', help='path to the photo folder')
     args = parser.parse_args()
-    print(args)
-    # if args.logging:
-    #     logging.basicConfig(
-    #         format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
-    #         level=logging.INFO,
-    #         filename=u'photo_archive_log.log'
-    #     )
+
 
     app = web.Application()
     app.add_routes([
