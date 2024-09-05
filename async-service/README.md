@@ -28,26 +28,22 @@
 pip install -r requirements.txt
 ```
 
-## Как запустить
+## Как развернуть на сервере
 
+Скачайте код:
+```sh
+git clone git@github.com:VneTraffiqua/Photograbber.git
+```
+Установите Docker и Docker-compose. [Ссылка на инструкцию.](https://www.howtogeek.com/devops/how-to-install-docker-and-docker-compose-on-linux/)
+
+
+Перейдите в директорию проекта и запустите `docker-compose.yml` командой:
 ```bash
-python server.py
+docker-compose -f docker-compose.yml up
 ```
 
 Сервер запустится на порту 8080, чтобы проверить его работу перейдите в браузере на страницу [http://127.0.0.1:8080/](http://127.0.0.1:8080/).
 
-## Как развернуть на сервере
-
-```bash
-python server.py
-```
-
-После этого перенаправить на микросервис запросы, начинающиеся с `/archive/`. Например:
-
-```
-GET http://host.ru/archive/3bea29ccabbbf64bdebcc055319c5745/
-GET http://host.ru/archive/af1ad8c76fda2e48ea9aed2937e972ea/
-```
 
 # Цели проекта
 
