@@ -47,7 +47,7 @@ async def archive(request):
     finally:
         if proc.returncode is None:
             proc.kill()
-        await proc.communicate()
+            await proc.communicate()
     return response
 
 
