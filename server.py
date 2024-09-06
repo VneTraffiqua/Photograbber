@@ -45,7 +45,8 @@ async def archive(request):
     except BaseException:
         logging.error(msg='SystemExit. Download was interrupted')
     finally:
-        proc.kill()
+        if proc.returncode is None:
+            proc.kill()
         await proc.communicate()
     return response
 
